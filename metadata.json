@@ -1,0 +1,6 @@
+{
+  "name": "Roozneveshte Journal",
+  "description": "A beautiful Persian daily journal and diary connected to Supabase for secure, real-time persistence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

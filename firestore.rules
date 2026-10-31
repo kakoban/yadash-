@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidEntry(data) {
+      return data.keys().hasAll([
+        'id',
+        'userId',
+        'type',
+        'title',
+        'body',
+        'tags',
+        'pinned',
+        'entryTime',
+        'createdAt',
+        'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id',
+        'userId',
+        'type',
+        'title',
+        'body',
+        'tags',
+        'pinned',
+        'entryTime',
+        'createdAt',
+        'updatedAt'
+      ]) &&
+      isValidId(data.id) &&
+      isValidId(data.userId) &&
+      data.userId == request.auth.uid &&
+      data.type is string &&
+      data.type.size() <= 20 &&
+      data.type in ['note', 'thought', 'idea', 'quote', 'list', 'link', 'code'] &&
+      data.title is string &&
+      data.title.size() <= 500 &&
+      data.body is string &&
+      data.body.size() >= 1 &&
+      data.body.size() <= 50000 &&
+      data.tags is list &&
+      data.tags.size() <= 20 &&
+      (data.tags.size() == 0 || (data.tags[0] is string && data.tags[0].size() <= 100)) &&
+      data.pinned is bool &&
+      data.entryTime is int &&
+      data.entryTime > 0 &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp;
+    }
+
+    match /entries/{entryId} {
+      allow get: if isVerified() && isValidId(entryId) && existing().userId == request.auth.uid;
+      allow list: if isVerified() && resource.data.userId == request.auth.uid;
+
+      allow create: if isVerified() &&
+        isValidId(entryId) &&
+        isValidEntry(incoming()) &&
+        incoming().id == entryId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if (
+        isVerified() &&
+        isValidId(entryId) &&
+        isValidEntry(incoming()) &&
+        existing().userId == request.auth.uid &&
+        incoming().userId == existing().userId &&
+        incoming().id == existing().id &&
+        incoming().entryTime == existing().entryTime &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'type',
+            'title',
+            'body',
+            'tags',
+            'pinned',
+            'updatedAt'
+          ])
+        )
+      );
+
+      allow delete: if isVerified() && isValidId(entryId) && existing().userId == request.auth.uid;
+    }
+  }
+}

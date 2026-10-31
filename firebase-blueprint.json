@@ -1,0 +1,84 @@
+{
+  "entities": {
+    "Entry": {
+      "title": "Entry",
+      "description": "A personal journal entry belonging to a specific authenticated user.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the entry.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the entry owner.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "type": {
+          "type": "string",
+          "description": "Category of the journal entry.",
+          "enum": ["note", "thought", "idea", "quote", "list", "link", "code"],
+          "maxLength": 20
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional title of the entry.",
+          "maxLength": 500
+        },
+        "body": {
+          "type": "string",
+          "description": "Main text content of the entry.",
+          "minLength": 1,
+          "maxLength": 50000
+        },
+        "tags": {
+          "type": "array",
+          "description": "List of string tags (bounded to at most 20 tags)."
+        },
+        "pinned": {
+          "type": "boolean",
+          "description": "Whether the entry is pinned to the top."
+        },
+        "entryTime": {
+          "type": "integer",
+          "description": "Timestamp in milliseconds representing the entry date."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the document was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the document was last updated."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "type",
+        "title",
+        "body",
+        "tags",
+        "pinned",
+        "entryTime",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/entries/{entryId}": {
+      "schema": {
+        "$ref": "#/entities/Entry"
+      },
+      "description": "Stores user journal entries isolated by userId."
+    }
+  }
+}

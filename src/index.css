@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+@import "tailwindcss";
+
+:root {
+  --font-sans: 'Vazirmatn', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  /* Professional Polish Slate & Blue Palette */
+  --paper: #F8FAFC;        /* slate-50 */
+  --paper-2: #FFFFFF;      /* white for cards and sidebar */
+  --ink: #0F172A;          /* slate-900 */
+  --ink-soft: #64748B;     /* slate-500 */
+  --line: #E2E8F0;         /* slate-200 */
+  --line-strong: #CBD5E1;  /* slate-300 */
+  --sage: #2563EB;         /* blue-600 */
+  --sage-dark: #1D4ED8;    /* blue-700 */
+  --clay: #EA580C;         /* orange-600 */
+  --clay-dark: #C2410C;    /* orange-700 */
+  --teal: #0D9488;         /* teal-600 */
+  --teal-light: #F0FDFA;   /* teal-50 */
+  --danger: #EF4444;       /* red-500 */
+}
+
+[data-theme="dark"] {
+  --paper: #0F172A;        /* slate-900 */
+  --paper-2: #1E293B;      /* slate-800 */
+  --ink: #F8FAFC;          /* slate-50 */
+  --ink-soft: #94A3B8;     /* slate-400 */
+  --line: #334155;         /* slate-700 */
+  --line-strong: #475569;  /* slate-600 */
+  --sage: #3B82F6;         /* blue-500 */
+  --sage-dark: #60A5FA;    /* blue-400 */
+  --clay: #FB923C;         /* orange-400 */
+  --clay-dark: #FDBA74;    /* orange-300 */
+  --teal: #2DD4BF;         /* teal-400 */
+  --teal-light: #115E59;   /* teal-800 */
+  --danger: #F87171;       /* red-400 */
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--paper);
+  color: var(--ink);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  direction: rtl;
+}
+
+/* Custom scrollbars for paper theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Hand-stitched spine visual effect on sidebar */
+.stitched-spine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1px;
+  width: 18px;
+  background-image: radial-gradient(circle, var(--line-strong) 2.5px, transparent 2.6px);
+  background-size: 18px 26px;
+  background-position: right 6px top 14px;
+  opacity: 0.7;
+}
+
+.font-mono-fira {
+  font-family: var(--font-mono);
+}
